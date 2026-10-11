@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN Goat Farm - Premium Quality Goats</title>
+    
+    <!-- Browser Tab Icon (Favicon) -->
+    <link rel="icon" type="image/png" href="Images/Logo.png">
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <!-- Custom CSS File -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- COMPULSORY 2-STEP VERIFICATION MODAL -->
+    <div id="verification-modal">
+        <div class="auth-card">
+            <img src="Images/Logo.png" alt="SN Goat Farm Logo">
+            <h2>Welcome to SN Goat Farm</h2>
+            <p id="modal-subtitle">Enter your Gmail address to receive a live 6-digit verification code directly in your inbox.</p>
+
+            <!-- STEP 1: Enter Email -->
+            <div id="step-email">
+                <input type="email" id="userEmailInput" placeholder="Enter your Gmail address" required>
+                <button class="btn" id="sendOtpBtn" style="width: 100%;" onclick="sendOTP()">Send Verification Code</button>
+            </div>
+
+            <!-- STEP 2: Enter 6-Digit Code -->
+            <div id="step-otp" style="display: none;">
+                <p style="font-size: 0.85rem; color: #2c5e3b; margin-bottom: 1rem; font-weight: 600;">
+                    <i class="fa-solid fa-envelope"></i> Code sent to your Gmail inbox (<span id="targetEmailSpan"></span>)!
+                </p>
+                <div class="otp-input-group">
+                    <input type="text" class="otp-field" maxlength="1" onkeyup="moveOtpFocus(this, 0)">
+                    <input type="text" class="otp-field" maxlength="1" onkeyup="moveOtpFocus(this, 1)">
+                    <input type="text" class="otp-field" maxlength="1" onkeyup="moveOtpFocus(this, 2)">
+                    <input type="text" class="otp-field" maxlength="1" onkeyup="moveOtpFocus(this, 3)">
+                    <input type="text" class="otp-field" maxlength="1" onkeyup="moveOtpFocus(this, 4)">
+                    <input type="text" class="otp-field" maxlength="1" onkeyup="moveOtpFocus(this, 5)">
+                </div>
+                <button class="btn" style="width: 100%;" onclick="verifyOTP()">Verify Code & Enter Site</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Banner -->
+    <div id="admin-banner">
+        <i class="fa-solid fa-chart-line"></i> Admin Dashboard: Total Website Visits: <span id="visit-count-display">0</span>
+    </div>
+
+    <!-- Header with Logo -->
+    <header>
+        <a class="logo" onclick="showHome()">
+            <img src="Images/Logo.png" alt="SN Goat Farm Logo" class="farm-logo-img">
+            SN Goat Farm
+        </a>
+        <nav>
+            <ul>
+                <li><a onclick="showHome()">Home</a></li>
+                <li><a onclick="showHome('goats')">Our Goats</a></li>
+                <li><a onclick="showHome('not-for-sale')">Farm Stars</a></li>
+                <li><a onclick="showHome('feedback')">Customer Feedback</a></li>
+                <li><a onclick="showHome('about')">About Us</a></li>
+            </ul>
+        </nav>
+        <div class="auth-box">
+            <div id="user-profile" class="user-profile">
+                <img id="user-avatar" src="" alt="User Avatar" class="user-avatar">
+                <span id="user-name"></span>
+                <i class="fa-solid fa-right-from-bracket" onclick="signOut()" style="cursor:pointer; margin-left:8px;" title="Sign Out"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- HOME VIEW -->
+    <div id="home-view" class="view-section active">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <h1>Welcome to SN Goat Farm</h1>
+            <p>100% Organic, Healthy & Well-Cared Livestock. Visit Us Physically in Faridabad to Inspect & Purchase!</p>
+            <a onclick="showHome('goats')" class="btn">Explore Available Goats</a>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="about">
+            <div class="features-grid">
+                <div class="feature-box">
+                    <i class="fa-solid fa-seedling"></i>
+                    <h3>Natural Organic Diet</h3>
+                    <p>Fed with premium quality grains, dry chaff, and nutritious green tree leaves like Khejri (लूंग की पत्ती).</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fa-solid fa-shield-heart"></i>
+                    <h3>Hygienic Housing</h3>
+                    <p>Maintained in spotless indoor rooms with slatted feeding troughs, raised beds, and strict sanitation.</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fa-solid fa-handshake"></i>
+                    <h3>Physical Verification</h3>
+                    <p>We believe in full transparency! Buyers are invited to visit our farm, inspect the goats, and negotiate directly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Available Goats Listing Section -->
+        <main class="container" id="goats">
+            <div class="section-title">
+                <h2>Our Available Livestock</h2>
+                <p>Explore Sukhiya, Munnu, and Tunnu available at our farm</p>
+            </div>
+
+            <div class="goat-grid">
+                <!-- Sukhiya Card -->
+                <div class="goat-card">
+                    <img src="Images/Sukhiya.png" alt="Sukhiya" class="goat-img">
+                    <div class="goat-info">
+                        <div class="goat-header">
+                            <span class="goat-name">Sukhiya (सुखिया)</span>
+                            <span class="goat-price">To buy, Meet Physically</span>
+                        </div>
+                        <div class="goat-breed">Breed: Healthy Goat</div>
+                        <p class="goat-desc">Docile temperament, great condition, and excellent daily feeding habits. Reared in clean and spacious shelter.</p>
+                        <div class="card-footer">
+                            <span class="badge">Available</span>
+                            <button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" 
+                                onclick="showDetail('Sukhiya (सुखिया)', ['Images/Sukhiya.png', 'Images/sukhiya/photo1.png'], 'Breed: Healthy Goat', 'To buy, Meet Physically', 'Docile temperament, great condition, and excellent daily feeding habits. Reared in clean and spacious shelter with utmost organic care.')">Inquire</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Munnu Card -->
+                <div class="goat-card">
+                    <img src="Images/munnu.png" alt="Munnu" class="goat-img">
+                    <div class="goat-info">
+                        <div class="goat-header">
+                            <span class="goat-name">Munnu (मुन्नू)</span>
+                            <span class="goat-price">To buy, Meet Physically</span>
+                        </div>
+                        <div class="goat-breed">Breed: Active Goat</div>
+                        <p class="goat-desc">Energetic, strong build, and raised on a balanced mix of wholesome grains and green fodder.</p>
+                        <div class="card-footer">
+                            <span class="badge">Available</span>
+                            <button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" 
+                                onclick="showDetail('Munnu (मुन्नू)', ['Images/munnu.png', 'Images/munnu/photo1.png', 'Images/munnu/photo2.png'], 'Breed: Active Goat', 'To buy, Meet Physically', 'Energetic, strong build, and raised on a balanced mix of wholesome grains and green fodder under professional supervision.')">Inquire</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tunnu Card -->
+                <div class="goat-card">
+                    <img src="Images/tunnu.png" alt="Tunnu" class="goat-img">
+                    <div class="goat-info">
+                        <div class="goat-header">
+                            <span class="goat-name">Tunnu (टुन्नू)</span>
+                            <span class="goat-price">To buy, Meet Physically</span>
+                        </div>
+                        <div class="goat-breed">Breed: Young Goat / Kid</div>
+                        <p class="goat-desc">Playful, healthy, and raised with special attention to growth nutrition and clean surroundings.</p>
+                        <div class="card-footer">
+                            <span class="badge">Available</span>
+                            <button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" 
+                                onclick="showDetail('Tunnu (टुन्नू)', ['Images/tunnu.png'], 'Breed: Young Goat / Kid', 'To buy, Meet Physically', 'Playful, healthy, and raised with special attention to growth nutrition and clean surroundings.')">Inquire</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- NOT FOR SALE SECTION -->
+        <section class="container" id="not-for-sale" style="padding-top: 0;">
+            <div class="section-title">
+                <h2>Our Special Herds (Not For Sale)</h2>
+                <p>Meet our prized farm studs and foundation goats kept for breeding and farm pride</p>
+            </div>
+
+            <div class="goat-grid">
+                <!-- Chunnu Card -->
+                <div class="goat-card">
+                    <img src="Images/chunnu.png" alt="Chunnu" class="goat-img">
+                    <div class="goat-info">
+                        <div class="goat-header">
+                            <span class="goat-name">Chunnu (चुन्नू)</span>
+                            <span class="goat-price" style="color: var(--not-for-sale-color);">Not For Sale</span>
+                        </div>
+                        <div class="goat-breed">Breed: Special Farm Goat</div>
+                        <p class="goat-desc">Highly cherished foundation goat of SN Goat Farm. Raised with love, top-tier nutrition, and excellent care.</p>
+                        <div class="card-footer">
+                            <span class="badge-not-for-sale">Farm Pride</span>
+                            <button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" 
+                                onclick="showDetail('Chunnu (चुन्नू)', ['Images/chunnu.png', 'Images/chunnu/photo1.png'], 'Breed: Special Farm Goat', 'Not For Sale (Farm Foundation)', 'Chunnu is one of our pride foundation goats raised with organic grains and nutritious green tree leaves. Kept for breeding and demonstration.')">Inquire</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sultan Card -->
+                <div class="goat-card">
+                    <img src="Images/sultan.png" alt="Sultan" class="goat-img">
+                    <div class="goat-info">
+                        <div class="goat-header">
+                            <span class="goat-name">Sultan (सुल्तान)</span>
+                            <span class="goat-price" style="color: var(--not-for-sale-color);">Not For Sale</span>
+                        </div>
+                        <div class="goat-breed">Breed: Majestic Stud</div>
+                        <p class="goat-desc">Majestic male stud with extraordinary build and active stamina. The star breeding buck of our farm.</p>
+                        <div class="card-footer">
+                            <span class="badge-not-for-sale">Breeding Stud</span>
+                            <button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" 
+                                onclick="showDetail('Sultan (सुल्तान)', ['Images/sultan.png', 'Images/sultan/photo1.png'], 'Breed: Majestic Stud', 'Not For Sale (Breeding Stud)', 'Sultan is our premier stud buck displaying outstanding growth traits, coat condition, and high vitality.')">Inquire</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badal Card -->
+                <div class="goat-card">
+                    <img src="Images/badal.png" alt="Badal" class="goat-img">
+                    <div class="goat-info">
+                        <div class="goat-header">
+                            <span class="goat-name">Badal (बादल)</span>
+                            <span class="goat-price" style="color: var(--not-for-sale-color);">Not For Sale</span>
+                        </div>
+                        <div class="goat-breed">Breed: Prime Male Goat</div>
+                        <p class="goat-desc">Beautiful coat patterns and gentle nature. Raised in ultra-clean conditions on a wholesome diet.</p>
+                        <div class="card-footer">
+                            <span class="badge-not-for-sale">Farm Pride</span>
+                            <button class="btn" style="padding: 0.4rem 1rem; font-size: 0.85rem;" 
+                                onclick="showDetail('Badal (बादल)', ['Images/badal.png'], 'Breed: Prime Male Goat', 'Not For Sale (Farm Pride)', 'Badal is a handsome, highly active goat maintained at SN Goat Farm on fresh sprouted grains and quality tree leaves.')">Inquire</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CUSTOMER FEEDBACK SECTION -->
+        <section class="feedback-section" id="feedback">
+            <div class="feedback-container">
+                <div class="section-title">
+                    <h2>Customer Feedback & Reviews</h2>
+                    <p>Read what our buyers say or leave your honest review after visiting our farm!</p>
+                </div>
+
+                <div class="feedback-form">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Leave a Review / Feedback</h3>
+                    <form id="reviewForm" onsubmit="submitReview(event)">
+                        <div class="form-group">
+                            <label for="reviewerName">Your Name:</label>
+                            <input type="text" id="reviewerName" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewRating">Rating:</label>
+                            <select id="reviewRating">
+                                <option value="5">⭐⭐⭐⭐⭐ (5/5) Excellent</option>
+                                <option value="4">⭐⭐⭐⭐ (4/5) Very Good</option>
+                                <option value="3">⭐⭐⭐ (3/5) Good</option>
+                                <option value="4">⭐⭐ (2/5) Not Good</option>
+                                <option value="5">⭐ (1/5) Bad</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reviewText">Your Experience / Feedback:</label>
+                            <textarea id="reviewText" rows="4" placeholder="Share your experience visiting or purchasing from SN Goat Farm..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Submit Feedback</button>
+                    </form>
+                </div>
+
+                <div class="reviews-list" id="reviewsList">
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span>Ahmad Khan</span>
+                            <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+                        </div>
+                        <p>"Visited SN Goat Farm in Faridabad. The indoor setup is extremely clean and well-maintained. All animals are fed natural green leaves and quality grains. Bought a very healthy goat!"</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-header">
+                            <span>Mohammad R.</span>
+                            <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+                        </div>
+                        <p>"Very honest owners. Sukhiya and Munnu are so active and playful. Glad to see such genuine organic livestock farming."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact" id="contact">
+            <h2>Visit SN Goat Farm Physically</h2>
+            <p>We welcome you to visit us in person to see our clean setup and inspect our goats!</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Faridabad, Haryana, India</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Visiting Hours: 8:00 AM - 10:00 PM (Mon-Sun)</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>sngoatfarm9718602741@gmail.com</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- GOAT DETAIL VIEW -->
+    <div id="detail-view" class="view-section">
+        <div class="container">
+            <a class="back-link" onclick="showHome('goats')"><i class="fa-solid fa-arrow-left"></i> Back to All Goats</a>
+            <div class="detail-wrapper">
+                <div class="detail-gallery">
+                    <div class="main-img-box">
+                        <img id="detail-img" src="" alt="Goat Main Photo">
+                    </div>
+                    <!-- Thumbnails row -->
+                    <div id="thumbnail-list" class="thumbnail-list"></div>
+                </div>
+                <div class="detail-content">
+                    <h2 id="detail-name"></h2>
+                    <div id="detail-price" class="detail-price"></div>
+                    <div id="detail-breed" class="detail-breed"></div>
+                    <p id="detail-desc" class="detail-desc"></p>
+                    <a id="whatsapp-link" href="#" target="_blank" class="whatsapp-btn">
+                        <i class="fa-brands fa-whatsapp fa-2x"></i> Inquire via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 SN Goat Farm. All rights reserved.</p>
+    </footer>
+
+    <!-- External JavaScript File -->
+    <script type="text/javascript" src="script.js"></script>
+
+</body>
+</html>
